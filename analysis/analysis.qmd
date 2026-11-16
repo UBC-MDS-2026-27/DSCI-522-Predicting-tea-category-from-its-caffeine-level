@@ -1,0 +1,64 @@
+---
+title: "About"
+format:
+  html:
+    toc: true
+---
+
+# Predicting Tea Category from Tea Characteristics
+
+## Summary
+
+[one paragraph that says what question you asked, what you found, and why it matters, plus the main limitations.]
+
+
+
+## Introduction (Clarissa)
+
+    [give enough background on the topic that someone unfamiliar with it can follow the rest of your report
+    explain why this problem is important or interesting. Don’t stop at one sentence; convince the reader it is worth answering.
+    clearly state the question you are trying to answer
+    describe the data set you used: where it comes from, what each row is, and which variables you use. Cite the data set.
+    clearly define your target/response variable (what you are predicting)
+    make sure your question can actually be answered with this data]
+
+
+
+## Methods (Yingwen)
+
+    [in written English, walk the reader through what you did from beginning to end, and why
+    name the model or method you used and explain why it fits your question
+    name the metric you used to evaluate it (e.g., accuracy, F1, RMSE) and explain why you chose it]
+
+    your report should include code which:
+        downloads the data from its original source on the web and saves a copy to data/raw/
+        wrangles and cleans the data from its original (downloaded) format to the format needed for your analysis, and saves it to data/processed/
+        splits the data into training and test sets before doing any exploratory data analysis or preprocessing. Don’t break the golden rule of machine learning: the test set should not influence any decision you make.
+        summarizes the training data in a way that is relevant to your question (exploratory data analysis)
+        creates a visualization of the training data that is relevant to your question
+        performs the classification or regression analysis
+
+
+
+## Results (Kangju)
+
+    show all the key results that answer your question, using figures and tables
+    make figures readable in the rendered HTML: label the axes in plain English (with units), include a legend when there is more than one colour or group, use a text size people can read, and avoid overplotting (e.g., with transparency)
+    keep tables clean: show the rows and columns that matter, with clear column names. Don’t dump a giant data frame.
+    give every figure and table a number and a caption (it’s ok to manually write down the figure/table number and caption for now, you do not need to use Quarto syntax for this yet), and refer to them in the text
+    double-check that what you say about the results matches what the figures and tables show
+
+## Discussion (Julia)
+
+    summarize what you found, and link it back to the question you asked
+    discuss what the findings mean in the real-world context of the problem (the domain)
+    discuss whether this is what you expected to find
+    discuss the assumptions and limitations of your methods and findings
+    discuss what impact such findings could have
+    discuss what future questions this could lead to
+
+## References
+
+    at least 4 citations relevant to the project, including the data set (format is your choice, just be consistent across the references)
+    every reference in the list should be cited somewhere in the text
+    references should be actual peer-reviewed publications or reputable sources, not AI hallucinations!

@@ -1,30 +1,71 @@
 ---
-title: "About"
+title: "Predicting Tea Category from Tea Characteristics"
+author: "Clarissa Nada Dahjan | Julia Gorospe | Kangju Sun | Yingwen Liu"
 format:
   html:
     toc: true
 ---
 
-# Predicting Tea Category from Tea Characteristics
+# Summary (Clarissa)
 
-## Summary
+In this project we ask whether a Chinese tea's caffeine level can be used to predict its category. 
+The dataset has eight categories: green, white, yellow, oolong, black, dark, pu'er and scented tea. 
+Using The [Chinese Tea Dataset](https://chinatea.house/dataset/), which describes 136 named Chinese teas, 
+we train a **\[insert method here when we decided, e.g. decision tree / logistic regression\]** classifier that uses caffeine level 
+(low, moderate or high) as its predictor. We compare it against a baseline that always predicts the most common category 
+(oolong, 25% of teas). **\[insert final result here\]**. This matters because shops and drinkers often treat the tea types 
+as a guide to caffeine levels. If category cannot be recovered from caffeine, that rule of thumb is unreliable, and people 
+limiting caffeine should not rely on tea type alone.
 
-[one paragraph that says what question you asked, what you found, and why it matters, plus the main limitations.]
-
-
-
-## Introduction (Clarissa)
-
-    [give enough background on the topic that someone unfamiliar with it can follow the rest of your report
-    explain why this problem is important or interesting. Don’t stop at one sentence; convince the reader it is worth answering.
-    clearly state the question you are trying to answer
-    describe the data set you used: where it comes from, what each row is, and which variables you use. Cite the data set.
-    clearly define your target/response variable (what you are predicting)
-    make sure your question can actually be answered with this data]
-
+The main limitations are the following:
+1.  Caffeine is recorded as a coarse three-level label rather than a measured amount, and most teas (69%) are labelled "moderate".
+2.  A model using caffeine alone can therefore identify at most three categories, which caps accuracy at about 41%.
+3.  The dataset is small, two categories are rare (4 yellow and 9 dark teas), and several teas appear twice under different spellings.
 
 
-## Methods (Yingwen)
+
+# Introduction (Clarissa)
+Tea is a major source of caffeine and is highly consumed in China. 
+Caffeine intake of up to 400 mg per day does not raise health concerns for healthy adults ([Yong et al., 2022](https://pubmed.ncbi.nlm.nih.gov/35513285/)), but people who are sensitive to caffeine, or who need to limit it, have to judge how much they are taking in. 
+Tea drinkers often use a tea's category as a rough guide, assuming for example that white and green teas are low in caffeine and black teas are high. However, caffeine content varies with tea variety, geographical origin 
+and season ([Zhang et al., 2022](https://www.maxapress.com/article/id/62e78ad3ce60b94f990b397f)), and a nationwide study of Chinese teas found that average caffeine content differed only modestly between categories, from about 27 mg/g for oolong to 43 mg/g for yellow tea ([Yong et al., 2022](https://pubmed.ncbi.nlm.nih.gov/35513285/)).
+
+In this project, we use a machine learning algorithm to predict a Chinese tea's category (for example green, oolong or black tea) given its caffeine level. 
+Answering this question is important because it tests how reliable category is as a guide to caffeine. If caffeine level strongly predicts category, the two carry overlapping information and category is a reasonable shortcut. 
+If it does not, the common rule of thumb is unreliable, and people limiting their caffeine should look for caffeine information directly rather than relying on tea type.
+
+To answer this question, we use [The Chinese Tea Dataset](https://chinatea.house/dataset/). It contains 136 named Chinese teas, such as Xi Hu Longjing and Menghai 7542, each described by 11 columns:
+an identifier, English and Chinese names, category, growing region, caffeine level, body, oxidation level, main flavour notes, a short written description and a tier. 
+Caffeine level is recorded as one of three values: low, moderate or high. The target we want to predict is the tea's category, which has eight classes: green, white, yellow, oolong, black, dark, pu'er and scented tea.
+
+```{python}
+#| label: load-data
+import os
+import requests
+import pandas as pd
+
+# create the data folders if they don't exist
+# (git does not track empty folders)
+os.makedirs("../data/raw", exist_ok=True)
+os.makedirs("../data/processed", exist_ok=True)
+
+# download the data if we don't already have a copy
+url = "https://chinatea.house/data/chinese-tea-dataset.csv"
+data_path = "../data/raw/chinese-tea-dataset.csv"
+
+if not os.path.exists(data_path):
+    request = requests.get(url)
+    with open(data_path, "wb") as f:
+        f.write(request.content)
+
+# read in data
+tea = pd.read_csv(data_path)
+caffeine_order = ["low", "moderate", "high"]
+tea.shape
+```
+
+
+# Methods (Yingwen)
 
     [in written English, walk the reader through what you did from beginning to end, and why
     name the model or method you used and explain why it fits your question
@@ -40,7 +81,7 @@ format:
 
 
 
-## Results (Kangju)
+# Results (Kangju)
 
     show all the key results that answer your question, using figures and tables
     make figures readable in the rendered HTML: label the axes in plain English (with units), include a legend when there is more than one colour or group, use a text size people can read, and avoid overplotting (e.g., with transparency)
@@ -48,7 +89,7 @@ format:
     give every figure and table a number and a caption (it’s ok to manually write down the figure/table number and caption for now, you do not need to use Quarto syntax for this yet), and refer to them in the text
     double-check that what you say about the results matches what the figures and tables show
 
-## Discussion (Julia)
+# Discussion (Julia)
 
     summarize what you found, and link it back to the question you asked
     discuss what the findings mean in the real-world context of the problem (the domain)
@@ -57,8 +98,13 @@ format:
     discuss what impact such findings could have
     discuss what future questions this could lead to
 
-## References
+# References
 
     at least 4 citations relevant to the project, including the data set (format is your choice, just be consistent across the references)
     every reference in the list should be cited somewhere in the text
     references should be actual peer-reviewed publications or reputable sources, not AI hallucinations!
+    # References
+
+Yong, L., Song, Y., Xiao, X., Sui, H., Xu, H., Tan, R., Yang, X., Song, J., Li, J., & Wei, S. (2022). Quantitative probabilistic assessment of caffeine intake from tea in Chinese adult consumers based on nationwide caffeine content determination and tea consumption survey. *Food and Chemical Toxicology, 165*, Article 113102. <https://doi.org/10.1016/j.fct.2022.113102>
+
+Zhang, S., Jin, J., Chen, J., Ercisli, S., & Chen, L. (2022). Purine alkaloids in tea plants: Component, biosynthetic mechanism and genetic variation. *Beverage Plant Research, 2*, Article 13. <https://doi.org/10.48130/BPR-2022-0013>

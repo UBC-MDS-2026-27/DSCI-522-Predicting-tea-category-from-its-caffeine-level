@@ -50,7 +50,7 @@ os.makedirs("../data/raw", exist_ok=True)
 os.makedirs("../data/processed", exist_ok=True)
 
 # download the data if we don't already have a copy
-url = "TODO: direct download link for the CSV on https://chinatea.house/dataset/"
+url = "https://chinatea.house/data/chinese-tea-dataset.csv"
 data_path = "../data/raw/chinese-tea-dataset.csv"
 
 if not os.path.exists(data_path):

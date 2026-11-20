@@ -85,6 +85,8 @@ clean_tea.head()
 Next, we split the cleaned dataset into an 80% training set and a 20% test set. To strictly follow to the **Golden Rule** and prevent data leakage, we perform all exploratory data analysis and model selection exclusively on the training data.
 
 ```{python}
+result = {}
+
 caffeine_level_order = ["low", "moderate", "high"]
 body_order = ["light", "light-medium", "medium", "medium-full", "full"]
 
@@ -148,24 +150,35 @@ chart
 
 Caffeine level alone will not perform well as a predictor due to heavy class overlap. Notably, all eight tea categories appear in the moderate column, where Green Tea and Oolong Tea are most heavily concentrated.
 
-### Baseline Model: Dummy Classifier
+## Baseline Model: Dummy Classifier
+
+We chose **accuracy** as our evaluation metric because this is a multi-class classification where all tea categories are equally important. Unlike domains such as medical screening, incorrectly labeling one tea category as another has no asymmetric penalty. Because our training set does not suffer from class imbalance, accuracy provides a reliable measure of model performance across all eight tea categories.
 
 To establish a performance benchmark, we first fit a dummy classifier that always predicts the most frequent tea category in the training set.
 ```{python}
 from sklearn.dummy import DummyClassifier
+from sklearn.model_selection import cross_val_score
 
 dummy = DummyClassifier(strategy="most_frequent")
 dummy.fit(X_train, y_train)
 
-print("Chosen Most Frequent:", dummy.predict(X_test[:1])[0])
-print(f"Train Score: {dummy.score(X_train, y_train):.3}")
+result["Dummy"] = {
+    "Train Score": dummy.score(X_train, y_train),
+    "CV Score": cross_val_score(dummy, X_train, y_train, cv=3, scoring="accuracy").mean()
+}
+print(f"Chosen {dummy.predict(X_test[:1])[0]}.")
+
+def print_score(model):
+    for name, value in result[model].items():
+        print(f"{name}: {value:.3}")
+print_score("Dummy")
 ```
 
-As expected, the baseline model has very low accuracy due to severe underfitting, confirming the need for a more complex model.
+As expected, the baseline model has very low cross-validation accuracy due to severe underfitting, confirming the need for a more complex model.
 
 ---
 
-### Single-Feature Model: Decision Tree (Caffeine Level Only)
+## Single-Feature Model: Decision Tree (Caffeine Level Only)
 
 Because our feature space has discrete ordinal levels and clear domain thresholds, a Decision Tree Classifier is a interpretable choice. To directly answer our research question, we first train a decision tree using **only** caffeine level while dropping all other features, tuning the tree depth by 3-fold cross-validation.
 
@@ -191,16 +204,20 @@ tree = GridSearchCV(
 )
 tree.fit(X_train, y_train)
 
+result["Caffeine-Only Decision Tree"] = {
+    "Train Score": tree.cv_results_["mean_train_score"][tree.best_index_],
+    "CV Score": tree.best_score_
+}
+
 print("Best tree depth:", tree.best_params_['decisiontreeclassifier__max_depth'])
-print(f"Train Score: {tree.cv_results_["mean_train_score"][tree.best_index_]:.3}")
-print(f"Val Score: {tree.best_score_:.3}")
+print_score("Caffeine-Only Decision Tree")
 ```
 
 While using caffeine level improves validation accuracy over the dummy baseline, the overall predictive performance remains weak. Caffeine level alone is insufficient to reliably distinguish between tea categories.
 
 ---
 
-### Full Mode: Decision Tree (All Features)
+## Full Mode: Decision Tree (All Features)
 
 ```{python}
 full_preprocessor = make_column_transformer(
@@ -221,15 +238,22 @@ full_tree = GridSearchCV(
 )
 full_tree.fit(X_train, y_train)
 
+result["Full Decision Tree"] = {
+    "Train Score": full_tree.cv_results_["mean_train_score"][full_tree.best_index_],
+    "CV Score": full_tree.best_score_
+}
+
 print("Best tree depth:", full_tree.best_params_['decisiontreeclassifier__max_depth'])
-print(f"Train Score: {full_tree.cv_results_["mean_train_score"][full_tree.best_index_]:.3}")
-print(f"Val Score: {full_tree.best_score_:.3}")
+print_score("Full Decision Tree")
 ```
 
 Comparing validation results across all three models shows a great jump in validation accuracy once body and oxidation level are included. Having selected the **Full Decision Tree** as our best-performing model based on cross-validation, we evaluate it once on the held-out test set to obtain an unbiased estimate:
 
 ```{python}
-print(f"Full Tree Test Score: {full_tree.score(X_test, y_test):.3}")
+test_score = full_tree.score(X_test, y_test)
+
+result["Full Decision Tree"]["Test Score"] = test_score
+print(f"Full Tree Test Score: {test_score:.3}")
 ```
 
 # Results
@@ -238,35 +262,13 @@ We compared three models to evaluate how well they predict tea category. Table 1
 
 **Table 1. Classification accuracy of the three models.**
 ```{python}
-from sklearn.model_selection import cross_val_score
 from IPython.display import display
 
-dummy_cv = cross_val_score(
-    dummy, X_train, y_train, cv=3, scoring="accuracy"
-).mean()
-
-caffeine_cv = tree.best_score_
-full_cv = full_tree.best_score_
-full_test = full_tree.score(X_test, y_test)
-
-results_table = pd.DataFrame({
-    "Model": [
-        "Dummy classifier",
-        "Caffeine-only decision tree",
-        "Full decision tree"
-    ],
-    "Validation accuracy": [
-        f"{dummy_cv:.1%}",
-        f"{caffeine_cv:.1%}",
-        f"{full_cv:.1%}"
-    ],
-    "Test accuracy": [
-        "Not evaluated",
-        "Not evaluated",
-        f"{full_test:.1%}"
-    ]
-})
-
+results_table = pd.DataFrame(result)
+num_cols = results_table.select_dtypes(include="number").columns
+results_table[num_cols] = results_table[num_cols].map(
+    lambda x: f"{x:.1%}" if pd.notna(x) else "N/A"
+)
 display(results_table)
 ```
 
@@ -279,7 +281,11 @@ import altair as alt
 
 plot_data = pd.DataFrame({
     "Model": ["Dummy classifier", "Caffeine-only decision tree", "Full decision tree"],
-    "Validation accuracy": [dummy_cv, caffeine_cv, full_cv]
+    "Validation accuracy": [
+        result["Dummy"]["CV Score"],
+        result["Caffeine-Only Decision Tree"]["CV Score"],
+        result["Full Decision Tree"]["CV Score"]
+    ]
 })
 
 chart = alt.Chart(plot_data, width = 100, height = 50).mark_bar().encode(

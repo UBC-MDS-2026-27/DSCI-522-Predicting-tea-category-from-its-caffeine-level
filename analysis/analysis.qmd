@@ -151,6 +151,8 @@ Caffeine level alone will not perform well as a predictor due to heavy class ove
 
 ## Baseline Model: Dummy Classifier
 
+We chose **accuracy** as our evaluation metric because this is a multi-class classification where all tea categories are equally important. Unlike domains such as medical screening, incorrectly labeling one tea category as another has no asymmetric penalty. Because our training set does not suffer from class imbalance, accuracy provides a reliable measure of model performance across all eight tea categories.
+
 To establish a performance benchmark, we first fit a dummy classifier that always predicts the most frequent tea category in the training set.
 ```{python}
 from sklearn.dummy import DummyClassifier

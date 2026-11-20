@@ -1,9 +1,6 @@
 # DSCI 522: Predicting tea category from its caffeine level
-DSCI 522 Team 12: 
-* Clarissa Nada Dahjan
-* Julia Gorospe
-* Kangju Sun
-* Yingwen Liu
+DSCI 522 Team 12
+Authors: Clarissa Nada Dahjan, Julia Gorospe, Kangju Sun, Yingwen Liu
 
 ## Summary
 
@@ -36,7 +33,7 @@ If this is your first time running the project, install uv and Quarto before pro
 
 4. Run the analysis and render the report from the root of the repository:
 
-   `uv run quarto render analysis/tea-category-predictor.qmd --execute`
+   `uv run quarto render analysis/tea-category-predictor.qmd`
 
 Running the analysis runs each code block in the Quarto document, so it may take a few minutes to fully finish. There are data loading and manipulation blocks, so there will be expected changes to files in `data/raw/` and `data/processed/`. The rendered report is written to `analysis/tea-category-predictor.pdf`, updating the version in the repository.
 

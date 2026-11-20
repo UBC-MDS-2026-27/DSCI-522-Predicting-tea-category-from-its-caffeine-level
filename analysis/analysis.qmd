@@ -206,11 +206,89 @@ Caffeine level alone is **not** a strong predictor of tea category (Validation a
 
 # Results (Kangju)
 
-    show all the key results that answer your question, using figures and tables
-    make figures readable in the rendered HTML: label the axes in plain English (with units), include a legend when there is more than one colour or group, use a text size people can read, and avoid overplotting (e.g., with transparency)
-    keep tables clean: show the rows and columns that matter, with clear column names. Don’t dump a giant data frame.
-    give every figure and table a number and a caption (it’s ok to manually write down the figure/table number and caption for now, you do not need to use Quarto syntax for this yet), and refer to them in the text
-    double-check that what you say about the results matches what the figures and tables show
+We compared three models to evaluate how well they predict tea category. Table 1 shows their mean cross-validation accuracy on the training data. The test accuracy is also reported for the selected full decision tree.
+
+**Table 1. Classification accuracy of the three models.**
+```{python}
+from sklearn.model_selection import cross_val_score
+from IPython.display import display
+
+dummy_cv = cross_val_score(
+    dummy, X_train, y_train, cv=3, scoring="accuracy"
+).mean()
+
+caffeine_cv = tree.best_score_
+full_cv = full_tree.best_score_
+full_test = full_tree.score(X_test, y_test)
+
+results_table = pd.DataFrame({
+    "Model": [
+        "Dummy classifier",
+        "Caffeine-only decision tree",
+        "Full decision tree"
+    ],
+    "Validation accuracy": [
+        f"{dummy_cv:.1%}",
+        f"{caffeine_cv:.1%}",
+        f"{full_cv:.1%}"
+    ],
+    "Test accuracy": [
+        "Not evaluated",
+        "Not evaluated",
+        f"{full_test:.1%}"
+    ]
+})
+
+display(results_table)
+```
+
+## Validation Accuracy Comparison
+
+Figure 1 compares the mean cross-validation accuracy of the three models.
+
+```{python}
+import altair as alt
+
+plot_data = pd.DataFrame({
+    "Model": ["Dummy classifier", "Caffeine-only decision tree", "Full decision tree"],
+    "Validation accuracy": [dummy_cv, caffeine_cv, full_cv]
+})
+
+chart = alt.Chart(plot_data).mark_bar().encode(
+    y=alt.Y("Model:N", title="Model"),
+    x=alt.X("Validation accuracy:Q", title="Validation accuracy",
+            axis=alt.Axis(format=".0%"))
+)
+
+chart
+```
+
+**Figure 1.** Mean three-fold cross-validation accuracy of the three classification models on the training data.
+
+In Figure 1, the caffeine only decision tree has a mean validation accuracy of 44.4%, while the full decision tree is 88.0%. This suggests that caffeine level alone is not sufficient to predict tea category. Adding body and oxidation level can improve prediction accuracy.
+
+
+## Caffeine Levels Across Tea Categories
+
+Figure 2 shows the caffeine levels across tea categories in the training data.
+
+```{python}
+import altair as alt
+
+chart2 = alt.Chart(train_df).mark_bar().encode(
+    y=alt.Y("category:N", title="Tea category"),
+    x=alt.X("count():Q", stack="normalize",
+            title="Proportion within category",
+            axis=alt.Axis(format=".0%")),
+    color=alt.Color("caffeine_level:N", title="Caffeine level")
+)
+
+chart2
+```
+
+**Figure 2.** The distribution of caffeine levels of each tea category.
+
+Figure 2 shows that different tea types can have similar caffeine levels. For example, green tea and scented tea both have low and moderate levels. Black tea and pu'er tea both have moderate and high levels. This shows why it is hard to predict tea type using only caffeine level.
 
 # Discussion (Julia)
 

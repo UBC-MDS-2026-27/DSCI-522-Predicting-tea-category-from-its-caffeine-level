@@ -9,16 +9,17 @@ format: pdf
 In this project we ask whether a Chinese tea's caffeine level can be used to predict its category. 
 The dataset has eight categories: green, white, yellow, oolong, black, dark, pu'er and scented tea. 
 Using The [Chinese Tea Dataset](https://chinatea.house/dataset/), which describes 136 named Chinese teas, 
-we train we train a decision tree classifier that uses caffeine level 
+we train a decision tree classifier that uses caffeine level 
 (low, moderate or high) as its predictor. We compare it against a baseline that always predicts the most common category 
 (oolong, 25% of teas), and a decision tree with three features: caffeine level, body, and oxidation level. This matters because shops and drinkers often treat the tea types 
 as a guide to caffeine levels. If category cannot be recovered from caffeine, that rule of thumb is unreliable, and people 
 limiting caffeine should not rely on tea type alone.
 
 The main limitations are the following:
-1.  Caffeine is recorded as a coarse three-level label rather than a measured amount, and most teas (69%) are labelled "moderate".
-2.  A model using caffeine alone can therefore identify at most three categories, which caps accuracy at about 41%.
-3.  The dataset is small, two categories are rare (4 yellow and 9 dark teas), and several teas appear twice under different spellings.
+
+1.  Caffeine is recorded as a coarse three-level label rather than a measured amount, and most teas (69%) are labelled "moderate".  
+2.  A model using caffeine alone can therefore identify at most three categories, which caps accuracy at about 41%.  
+3.  The dataset is small, two categories are rare (4 yellow and 9 dark teas), and several teas appear twice under different spellings.  
 
 
 
@@ -60,7 +61,7 @@ if not os.path.exists(data_path):
 # read in data
 tea = pd.read_csv(data_path)
 print(f"Samples: {tea.shape[0]}; Features: {tea.shape[1]}")
-tea.head()
+tea.info()
 ```
 
 
@@ -115,9 +116,10 @@ While the summary table shows that several tea categories share the exact same m
 
 ```{python}
 import altair as alt
+alt.renderers.enable('png', scale_factor=2.0)
 
 chart = (
-    alt.Chart(train_df)
+    alt.Chart(train_df, width = 120, height = 200)
     .mark_circle()
     .encode(
         x=alt.X(
@@ -135,8 +137,6 @@ chart = (
         color=alt.Color("category:N", legend=None),
     )
     .properties(
-        width=400,
-        height=300,
         title="Tea Category Distribution by Caffeine Level",
     )
 )
@@ -157,7 +157,7 @@ from sklearn.dummy import DummyClassifier
 dummy = DummyClassifier(strategy="most_frequent")
 dummy.fit(X_train, y_train)
 
-print("Chosen", dummy.predict(X_test[:1])[0])
+print("Chosen Most Frequent:", dummy.predict(X_test[:1])[0])
 print(f"Train Score: {dummy.score(X_train, y_train):.3}")
 ```
 
@@ -282,7 +282,7 @@ plot_data = pd.DataFrame({
     "Validation accuracy": [dummy_cv, caffeine_cv, full_cv]
 })
 
-chart = alt.Chart(plot_data).mark_bar().encode(
+chart = alt.Chart(plot_data, width = 100, height = 50).mark_bar().encode(
     y=alt.Y("Model:N", sort='x', title="Model"),
     x=alt.X("Validation accuracy:Q", title="Validation accuracy",
             axis=alt.Axis(format=".0%"))
@@ -299,15 +299,17 @@ In Figure 1, the caffeine only decision tree has a mean validation accuracy of 4
 
 **Table 2a. Confusion matrix for predicted tea types using only caffiene-level.**
 ```{python}
+import numpy as np
 from sklearn.metrics import confusion_matrix
 
 predictions = tree.predict(X_test)
-labels = tree.classes_
+labels = np.array([label.removesuffix(' Tea') for label in tree.classes_])
+
 
 confus_matrix = pd.DataFrame(
     confusion_matrix(y_test, predictions),
     index=[f"Actual {label}" for label in labels],
-    columns=[f"Predicted {label}" for label in labels]
+    columns=[f"{label}" for label in labels]
 )
 
 confus_matrix
@@ -316,12 +318,11 @@ confus_matrix
 **Table 2b. Confusion matrix for predicted tea types using caffiene-level, body, and oxidation-level.**
 ```{python}
 full_predictions = full_tree.predict(X_test)
-labels = full_tree.classes_
 
 full_confus_matrix = pd.DataFrame(
     confusion_matrix(y_test, full_predictions),
     index=[f"Actual {label}" for label in labels],
-    columns=[f"Predicted {label}" for label in labels]
+    columns=[f"{label}" for label in labels]
 )
 
 full_confus_matrix
@@ -335,7 +336,7 @@ Figure 3 shows the caffeine levels across tea categories in the training data.
 ```{python}
 import altair as alt
 
-chart2 = alt.Chart(train_df).mark_bar().encode(
+chart2 = alt.Chart(train_df, width = 100, height = 150).mark_bar().encode(
     y=alt.Y("category:N", title="Tea category"),
     x=alt.X("count():Q", stack="normalize",
             title="Proportion within category",
@@ -355,9 +356,9 @@ Figure 3 shows that different tea types can have similar caffeine levels. For ex
 
 The 3-level caffeine category did not distinguish tea category well. From Table 2a it is clear that there is difficultly differentiating any tea from the oolong category based on caffeine level alone. Adding information about tea body and oxidation level improved the ability to accurately identify a tea category. 
 
-For individuals looking to limit their caffeine intake, using tea categories alone may not be a precise proxy for caffeine content. Beyond variation in caffeine levels within a category, the method of preparation also impacts available caffeine content ([Oliveira, 2012](https://doi.org/10.1590/S0101-20612012005000009)). Tea drinkers may want to assess more characteristics of a tea when selecting a variety than simply the tea category or caffeine level. The oxidation level plays a large role in the flavour of a tea which may influence preferences in taste aside from caffeine content ([Chen et al., 2021](https://doi.org/10.1016/j.foodres.2021.110613)). For example, green teas have low oxidation levels because they are heat treated after harvest to kill the enzymes that complete the process while white and black teas have higher oxidation levels because they are allowed to dry naturally. 
+For individuals looking to limit their caffeine intake, using tea categories alone may not be a precise proxy for caffeine content. Beyond variation in caffeine levels within a category, method of tea preparation also impacts available caffeine content ([Oliveira, 2012](https://doi.org/10.1590/S0101-20612012005000009)). Tea drinkers may want to assess more characteristics of a tea when selecting a variety than simply the tea category or caffeine level. The oxidation level plays a large role in the flavour of a tea which may influence preferences in taste aside from caffeine content ([Chen et al., 2021](https://doi.org/10.1016/j.foodres.2021.110613)). For example, green teas have low oxidation levels because they are heat treated after harvest to kill the enzymes that complete the process while white and black teas have higher oxidation levels because they are allowed to dry naturally. 
 
-The results of the decision tree classifier confirmed our expectation that caffiene level would not predict tea category well. However, the analysis is limited by the coarseness of the caffeine categories and class imbalance favouring the moderate category. A more granular or even a numeric caffeine level could change the conclusion of this analysis. The dataset is relatively small with class imbalance which may hinder the performance of a decision tree classifier. Additional methods for weighting the classes may be difficult to implement given the size of some of the categories.
+The results of the decision tree classifier confirmed our expectation that caffeine level would not predict tea category well. However, the analysis is limited by the coarseness of the caffeine categories and class imbalance favouring the moderate category. A more granular or even a numeric caffeine level could change the conclusion of this analysis. The dataset is relatively small with a fair bit of class imbalance which may hinder the performance of a decision tree classifier. Additional methods for weighting the classes may be difficult to implement given the size of some of the categories.
 
 Given the context of the introduction and the most common concern tea drinkers may have, it may be more valuable to further assess the efficacy of predicting caffeine-level from other tea factors.
 

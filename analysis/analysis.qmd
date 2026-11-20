@@ -112,6 +112,41 @@ summary_table
 
 From the training summary table, several tea categories share the exact same caffiene level, whereas the mean oxidation varies across categories. This strongly suggests that relying only on caffeine level will likely result in underfitting.
 
+While the summary table shows that several tea categories share the exact same most frequent caffeine level, looking only at the mode hides how much categories overlap across the full distribution. To inspect the complete spread of caffeine levels across each tea category, we plot the category counts below.
+
+```{python}
+import altair as alt
+
+chart = (
+    alt.Chart(train_df)
+    .mark_circle()
+    .encode(
+        x=alt.X(
+            "caffeine_level:N",
+            title="Caffeine Level",
+            sort=caffeine_level_order,
+            axis=alt.Axis(labelAngle=0),
+        ),
+        y=alt.Y("category:N", title="Tea Category"),
+        size=alt.Size(
+            "count():Q",
+            title="Number of Teas",
+            scale=alt.Scale(range=[100, 1500]),
+        ),
+        color=alt.Color("category:N", legend=None),
+    )
+    .properties(
+        width=400,
+        height=300,
+        title="Tea Category Distribution by Caffeine Level",
+    )
+)
+
+chart
+```
+
+Caffeine level alone will not perform well as a predictor due to heavy class overlap. Notably, all eight tea categories appear in the moderate column, where Green Tea and Oolong Tea are most heavily concentrated.
+
 ### Baseline Model: Dummy Classifier
 
 To establish a performance benchmark, we first fit a dummy classifier that always predicts the most frequent tea category in the training set.
@@ -133,7 +168,6 @@ As expected, the baseline model has very low accuracy due to severe underfitting
 
 Because our feature space has discrete ordinal levels and clear domain thresholds, a Decision Tree Classifier is a interpretable choice. To directly answer our research question, we first train a decision tree using **only** caffeine level while dropping all other features, tuning the tree depth by 3-fold cross-validation.
 
-`
 ```{python}
 from sklearn.pipeline import make_pipeline
 from sklearn.compose import make_column_transformer
@@ -196,13 +230,6 @@ Comparing validation results across all three models shows a great jump in valid
 ```{python}
 print(f"Full Tree Test Score: {full_tree.score(X_test, y_test):.3}")
 ```
-
-
-###### MAY PUT IN RESULT #####
-###### MAY PUT IN RESULT #####
-Caffeine level alone is **not** a strong predictor of tea category (Validation accuracy = 0.444), as multiple tea types share overlapping caffeine levels. However, adding oxidation level and body increases validation accuracy to 0.880 (and achieves 0.786 on the unseen test set).
-###### MAY PUT IN RESULT #####
-###### MAY PUT IN RESULT #####
 
 # Results (Kangju)
 

@@ -371,8 +371,6 @@ chart2
 
 Figure 3 shows that different tea types can have similar caffeine levels. For example, green tea and scented tea both have low and moderate levels. Black tea and pu'er tea both have moderate and high levels. This shows why it is hard to predict tea type using only caffeine level.
 
-While the caffeine level is our starting point, oxidation level is a stronger single-feature candidate for predicting tea category because traditional tea classifications is closely related to oxidation ranges. For the future plan, fit a simple decision tree on each candidate feature separately using cross-validation, comparing accuracy against the baseline model.
-
 
 # Discussion
 
@@ -382,7 +380,7 @@ For individuals looking to limit their caffeine intake, using tea categories alo
 
 The results of the decision tree classifier confirmed our expectation that caffeine level would not predict tea category well. However, the analysis is limited by the coarseness of the caffeine categories and class imbalance favouring the moderate category. A more granular or even a numeric caffeine level could change the conclusion of this analysis. The dataset is relatively small with a fair bit of class imbalance which may hinder the performance of a decision tree classifier. Additional methods for weighting the classes may be difficult to implement given the size of some of the categories.
 
-Given the context of the introduction and the most common concern tea drinkers may have, it may be more valuable to further assess the efficacy of predicting caffeine-level from other tea factors.
+Given the context of the introduction and the most common concern tea drinkers may have, it may be more valuable to further assess the efficacy of predicting caffeine-level from other tea factors. Oxidation level is a stronger single-feature candidate for predicting tea category because traditional tea classifications is closely related to oxidation ranges. For the future plan, fit a simple decision tree on each candidate feature separately using cross-validation, comparing accuracy against the baseline model.
 
 
 # References

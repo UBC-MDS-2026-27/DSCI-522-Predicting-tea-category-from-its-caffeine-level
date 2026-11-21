@@ -37,5 +37,5 @@ to staff of the UBC Masters of Data Science Vancouver program. Full list of Misc
 
 ## Procedure for Handling Incidents
 
-Any incidents regarding contributing to this repository should be reported to the members of Team 12.
+Any incidents regarding contributing to this repository should be reported to one of the members of Team 12 (cnadad10@student.ubc.ca).
 Alternatively, incidents can be reported through [UBC Investigations Office](https://io.ubc.ca/).

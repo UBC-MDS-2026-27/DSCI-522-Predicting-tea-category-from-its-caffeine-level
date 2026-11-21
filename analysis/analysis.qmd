@@ -6,7 +6,7 @@ format:
     toc: true
 ---
 
-# Summary (Clarissa)
+# Summary
 
 In this project we ask whether a Chinese tea's caffeine level can be used to predict its category. 
 The dataset has eight categories: green, white, yellow, oolong, black, dark, pu'er and scented tea. 
@@ -24,7 +24,7 @@ The main limitations are the following:
 
 
 
-# Introduction (Clarissa)
+# Introduction
 Tea is a major source of caffeine and is highly consumed in China. 
 Caffeine intake of up to 400 mg per day does not raise health concerns for healthy adults ([Yong et al., 2022](https://pubmed.ncbi.nlm.nih.gov/35513285/)), but people who are sensitive to caffeine, or who need to limit it, have to judge how much they are taking in. 
 Tea drinkers often use a tea's category as a rough guide, assuming for example that white and green teas are low in caffeine and black teas are high. However, caffeine content varies with tea variety, geographical origin 
@@ -40,23 +40,33 @@ Caffeine level is recorded as one of three values: low, moderate or high. The ta
 
 ```{python}
 #| label: load-data
-import os
+from pathlib import Path
 import requests
 import pandas as pd
 
+def get_project_root(marker: str = "pyproject.toml") -> Path:
+  current = Path.cwd().resolve()
+  for parent in [current, *current.parents]:
+    if (parent / marker).exists():
+      return parent
+
+project_root = get_project_root()
+
 # create the data folders if they don't exist
 # (git does not track empty folders)
-os.makedirs("./data/raw", exist_ok=True)
-os.makedirs("./data/processed", exist_ok=True)
+raw_dir = project_root / "data" / "raw"
+processed_dir = project_root / "data" / "processed"
+raw_dir.mkdir(parents=True, exist_ok=True)
+processed_dir.mkdir(parents=True, exist_ok=True)
 
 # download the data if we don't already have a copy
 url = "https://chinatea.house/data/chinese-tea-dataset.csv"
-data_path = "./data/raw/chinese-tea-dataset.csv"
+data_path = raw_dir / "chinese-tea-dataset.csv"
 
-if not os.path.exists(data_path):
+if not data_path.exists():
     request = requests.get(url)
-    with open(data_path, "wb") as f:
-        f.write(request.content)
+    request.raise_for_status()
+    data_path.write_bytes(request.content)
 
 # read in data
 tea = pd.read_csv(data_path)
@@ -65,7 +75,7 @@ tea.head()
 ```
 
 
-# Methods (Yingwen)
+# Methods
 
 Using the dataset downloaded in the Introduction section, we evaluate our primary research question: **Can caffeine level alone serve as a reliable predictor of tea category?**
 
@@ -77,7 +87,8 @@ First, we remove unique identifiers and sparse attributes, retaining only the ta
 from sklearn.model_selection import train_test_split
 
 clean_tea = tea[["category", "caffeine_level", "body", "oxidation_level"]]
-clean_tea.to_csv("./data/processed/clean_tea.csv", index=False)
+clean_path = processed_dir / "clean_tea.csv"
+clean_tea.to_csv(clean_path, index=False)
 
 clean_tea.head()
 ```
@@ -255,7 +266,7 @@ result["Full Decision Tree"]["Test Score"] = test_score
 print(f"Full Tree Test Score: {test_score:.3}")
 ```
 
-# Results (Kangju)
+# Results
 
 We compared three models to evaluate how well they predict tea category. Table 1 shows their mean cross-validation accuracy on the training data. The test accuracy is also reported for the selected full decision tree.
 
@@ -323,7 +334,7 @@ chart2
 
 Figure 2 shows that different tea types can have similar caffeine levels. For example, green tea and scented tea both have low and moderate levels. Black tea and pu'er tea both have moderate and high levels. This shows why it is hard to predict tea type using only caffeine level.
 
-# Discussion (Julia)
+# Discussion
 
     summarize what you found, and link it back to the question you asked
     discuss what the findings mean in the real-world context of the problem (the domain)

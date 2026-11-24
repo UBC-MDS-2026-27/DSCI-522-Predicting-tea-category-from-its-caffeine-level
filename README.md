@@ -14,30 +14,46 @@ The final report can be found [here in PDF format](analysis/tea-category-predict
 
 ## Dependencies
 
-We use Python 3.14, uv (version 0.12 or higher), and Quarto (version 1.10 or higher). 
-Python packages are listed in `pyproject.toml` and `uv.lock`.
+We use [Docker](https://www.docker.com/) to run the analysis with the same software and package versions. The image is published on Docker Hub at [xilillusion/dsci-522-predicting-tea-category-from-its-caffeine-level](https://hub.docker.com/r/xilillusion/dsci-522-predicting-tea-category-from-its-caffeine-level). This installs uv, Quarto, and Python with the packages listed in `pyproject.toml` where exact versions are locked in `uv.lock`.
 
 ## Running the Project
 
-If this is your first time running the project, install uv and Quarto before proceeding with these steps.
+Please refer to the Dependencies section for Docker and Docker Image usage before proceeding with the next steps:
 
-1. Clone the repository:
+If this is your first time running the project, install and launch [Docker](https://www.docker.com/). 
 
-   `git clone https://github.com/UBC-MDS-2026-27/DSCI-522-Predicting-tea-category-from-its-caffeine-level.git`
+Then, clone this repository and move into it:
 
-2. Move into the project folder from your terminal:
+   ``` bash
+   git clone https://github.com/UBC-MDS-2026-27/DSCI-522-Predicting-tea-category-from-its-caffeine-level.git
+   cd DSCI-522-Predicting-tea-category-from-its-caffeine-level
+   ```
 
-   `cd DSCI-522-Predicting-tea-category-from-its-caffeine-level`
+Once cloned, execute the following commands from the root of this repository.
 
-3. Create and/or sync your virtual environment:
+1. If you don't have an ssh key yet, make one with the following command and press Enter at each question that it prompts you. This key is what gives you access to the Docker container.
 
-   `uv sync`
+``` bash
+ssh-keygen -t ed25519
+```
 
-4. Run the analysis and render the report from the root of the repository:
+2. Download the [image](https://hub.docker.com/r/xilillusion/dsci-522-predicting-tea-category-from-its-caffeine-level)
 
-   `uv run quarto render analysis/tea-category-predictor.qmd`
+``` bash
+docker compose pull
+```
 
-Running the analysis runs each code block in the Quarto document, so it may take a few minutes to fully finish. There are data loading and manipulation blocks, so there will be expected changes to files in `data/raw/` and `data/processed/`. The rendered report is written to `analysis/tea-category-predictor.pdf`, updating the version in the repository.
+3. Run the analysis and render the report. 
+
+``` bash
+docker compose run -rm analysis-env uv run quarto render
+```
+
+Rendering runs each code block in the Quarto document, so it may take a few minutes to fully finish. There are data loading and manipulation blocks, so there will be expected changes to files in data/raw/ and data/processed/. The rendered report is written to analysis/tea-category-predictor.pdf, updating the version in the repository. The `-rm` tag allows the container to remove itself whenever the render is complete.
+
+
+## Contributing
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) if you are interested in changing any part of this repository (e.g., update the analysis, the published report, or add a package).
 
 
 ## AI Usage Statement

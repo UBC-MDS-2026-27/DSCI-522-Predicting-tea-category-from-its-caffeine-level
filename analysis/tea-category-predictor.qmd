@@ -1,7 +1,6 @@
 ---
 title: "Predicting Tea Category from Tea Characteristics"
 author: "Clarissa Nada Dahjan | Julia Gorospe | Kangju Sun | Yingwen Liu"
-format: pdf
 ---
 
 # Summary

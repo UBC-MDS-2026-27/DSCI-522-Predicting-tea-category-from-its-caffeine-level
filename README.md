@@ -52,6 +52,10 @@ docker compose run -rm analysis-env uv run quarto render
 Rendering runs each code block in the Quarto document, so it may take a few minutes to fully finish. There are data loading and manipulation blocks, so there will be expected changes to files in data/raw/ and data/processed/. The rendered report is written to analysis/tea-category-predictor.pdf, updating the version in the repository. The `-rm` tag allows the container to remove itself whenever the render is complete.
 
 
+## Contributing
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) if you are interested in changing any part of this repository (e.g., update the analysis, the published report, or add a package).
+
+
 ## AI Usage Statement
 
 We used a mix of Claude and ChatGPT to help with data analysis, explain the logic, review our workflow, and check our code. All code and suggested changes were reviewed and tested by team members before being pushed to the repository. We take full responsibility for the content of this repository.

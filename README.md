@@ -37,7 +37,7 @@ Once cloned, execute the following commands from the root of this repository.
 ssh-keygen -t ed25519
 ```
 
-2. Download the [image](https://hub.docker.com/r/xilillusion dsci-522-predicting-tea-category-from-its-caffeine-level).
+2. Download the [image](https://hub.docker.com/r/xilillusion/dsci-522-predicting-tea-category-from-its-caffeine-level)
 
 ``` bash
 docker compose pull

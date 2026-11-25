@@ -12,6 +12,8 @@ We used the [Chinese Tea Dataset](https://chinatea.house/dataset/) to ask whethe
 
 The final report can be found [here in PDF format](analysis/tea-category-predictor.pdf).
 
+Also available online at [GitHub Pages](https://ubc-mds-2026-27.github.io/DSCI-522-Predicting-tea-category-from-its-caffeine-level/).
+
 ## Dependencies
 
 We use [Docker](https://www.docker.com/) to run the analysis with the same software and package versions. The image is published on Docker Hub at [xilillusion/dsci-522-predicting-tea-category-from-its-caffeine-level](https://hub.docker.com/r/xilillusion/dsci-522-predicting-tea-category-from-its-caffeine-level). This installs uv, Quarto, and Python with the packages listed in `pyproject.toml` where exact versions are locked in `uv.lock`.

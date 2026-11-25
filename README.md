@@ -20,9 +20,9 @@ We use [Docker](https://www.docker.com/) to run the analysis with the same softw
 
 ## Running the Project
 
-Please refer to the Dependencies section for Docker and Docker Image usage before proceeding with the next steps:
+Before continuing, check the [Dependencies](#dependencies) section for how this project uses Docker and Docker images.
 
-If this is your first time running the project, install and launch [Docker](https://www.docker.com/). 
+If this is your first time running the project, install and start [Docker](https://docs.docker.com/engine/install/) or [Docker Desktop](https://docs.docker.com/desktop/).
 
 Then, clone this repository and move into it:
 
@@ -51,7 +51,7 @@ docker compose pull
 docker compose run -rm analysis-env uv run quarto render
 ```
 
-Rendering runs each code block in the Quarto document, so it may take a few minutes to fully finish. There are data loading and manipulation blocks, so there will be expected changes to files in data/raw/ and data/processed/. The rendered report is written to analysis/tea-category-predictor.pdf, updating the version in the repository. The `-rm` tag allows the container to remove itself whenever the render is complete.
+Rendering runs each code block in the Quarto document, so it may take a few minutes to fully finish. There are data loading and manipulation blocks, so there will be expected changes to files in data/raw/ and data/processed/. The rendered report is written to analysis/tea-category-predictor.pdf and analysis/tea-category-predictor.html, updating the version in the repository. The `-rm` tag allows the container to remove itself whenever the render is complete.
 
 
 ## Contributing

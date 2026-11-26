@@ -2,7 +2,9 @@
 # https://github.com/chendaniely/docker-uv-renv
 
 # Start from Ubuntu Linux (this image also has R, which you can ignore).
-FROM rocker/r-ver:4.6.2
+# FROM rocker/r-ver:4.6.2
+# Since the project is exclusively python/uv this is a much lighter base image (~1/4 the size)
+FROM ubuntu:26.04
 
 # Install the programs the project needs:
 # curl downloads files, git/less/nano let you work in a terminal,

@@ -19,9 +19,6 @@ on:
       - pyproject.toml
       - uv.lock
       - .python-version
-      - renv.lock
-      - .Rprofile
-      - renv/activate.R
       - .github/workflows/publish-dockerhub.yml
 
 env:

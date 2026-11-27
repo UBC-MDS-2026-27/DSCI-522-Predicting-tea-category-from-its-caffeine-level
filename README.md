@@ -50,10 +50,10 @@ docker compose pull
 3. Run the analysis and render the report. 
 
 ``` bash
-docker compose run -rm analysis-env uv run quarto render
+docker compose run --rm analysis-env uv run quarto render
 ```
 
-Rendering runs each code block in the Quarto document, so it may take a few minutes to fully finish. There are data loading and manipulation blocks, so there will be expected changes to files in data/raw/ and data/processed/. The rendered report is written to analysis/tea-category-predictor.pdf and analysis/tea-category-predictor.html, updating the version in the repository. The `-rm` tag allows the container to remove itself whenever the render is complete.
+Rendering runs each code block in the Quarto document, so it may take a few minutes to fully finish. There are data loading and manipulation blocks, so there will be expected changes to files in data/raw/ and data/processed/. The rendered report is written to analysis/tea-category-predictor.pdf and analysis/tea-category-predictor.html, updating the version in the repository. The `--rm` tag allows the container to remove itself whenever the render is complete.
 
 
 ## Contributing
